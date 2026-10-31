@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="internal/export_figures.py">
+<title>Float16</title>
+<style>
+.diagram-scope {
+  --diagram-bg: #f5f5f5;
+  --diagram-text: #2d3748;
+  --diagram-muted: #718096;
+  --diagram-panel: #edf2f7;
+  --diagram-accent: #BC5215;
+  --diagram-mono: var(--slidev-code-font-family, "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.diagram-wire      { stroke: var(--diagram-muted); stroke-width: 2; fill: none; stroke-linecap: round; }
+.diagram-dead      { stroke: var(--diagram-muted); stroke-width: 2; fill: none; stroke-linecap: round; opacity: 0.45; }
+.diagram-dead-dash { stroke: var(--diagram-muted); stroke-width: 2; fill: none; stroke-linecap: round; stroke-dasharray: 4 4; opacity: 0.5; }
+.diagram-live      { stroke: var(--diagram-accent); stroke-width: 3; fill: none; stroke-linecap: round; }
+.diagram-node      { fill: var(--diagram-accent); stroke: none; }
+.diagram-arrow     { fill: var(--diagram-muted); stroke: none; }
+
+.diagram-box-on   { stroke: var(--diagram-accent); stroke-width: 2; fill: var(--diagram-panel); rx: 4; }
+.diagram-box-off  { stroke: var(--diagram-muted); stroke-width: 2; fill: none; rx: 4; opacity: 0.55; }
+.diagram-kind     { fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 8px; letter-spacing: 0.06em; text-anchor: middle; }
+.diagram-state-on { fill: var(--diagram-accent); font-family: var(--diagram-mono); font-size: 11px; font-weight: 600; text-anchor: middle; }
+.diagram-state-off{ fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 11px; text-anchor: middle; }
+
+[data-on].is-on  { stroke: var(--diagram-accent); stroke-width: 2; fill: var(--diagram-panel); opacity: 1; }
+[data-on].is-off { stroke: var(--diagram-muted); stroke-width: 2; fill: none; opacity: 0.55; }
+
+.diagram-label { fill: var(--diagram-text); font-family: var(--diagram-mono); font-size: 12px; }
+.diagram-idx   { fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 10px; letter-spacing: 0.04em; }
+.diagram-rail-label { fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 10px; letter-spacing: 0.04em; text-anchor: middle; }
+.diagram-rail-label-live { fill: var(--diagram-bg); font-family: var(--diagram-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-anchor: middle; }
+
+.diagram-gate        { stroke: var(--diagram-text); stroke-width: 2; fill: none; stroke-linejoin: round; }
+.diagram-bubble      { stroke: var(--diagram-accent); stroke-width: 2; fill: var(--diagram-bg); }
+.diagram-bubble-live { stroke: var(--diagram-accent); stroke-width: 2; fill: var(--diagram-bg); }
+.diagram-gate-label  { fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 9px; letter-spacing: 0.04em; }
+
+.diagram-metal      { fill: var(--diagram-muted); opacity: 0.26; stroke: none; }
+.diagram-metal-live { fill: var(--diagram-accent); opacity: 0.9; stroke: none; }
+.diagram-poly       { fill: var(--diagram-text); opacity: 0.14; stroke: var(--diagram-muted); stroke-width: 1; }
+.diagram-diff       { stroke: var(--diagram-muted); stroke-width: 1; }
+.diagram-well       { fill: none; stroke: var(--diagram-muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+.diagram-hatch      { stroke: var(--diagram-muted); stroke-width: 1; }
+.diagram-contact    { fill: var(--diagram-text); stroke: none; }
+.diagram-layer-cap  { fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 9px; letter-spacing: 0.04em; }
+
+.diagram-region { fill: none; stroke: var(--diagram-muted); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.65; rx: 4; }
+.diagram-block       { fill: var(--diagram-panel); stroke: var(--diagram-text); stroke-width: 2; rx: 4; }
+.diagram-block-label { fill: var(--diagram-text); font-family: var(--diagram-mono); font-size: 11px; }
+
+.diagram-chip      { fill: var(--diagram-bg); stroke: var(--diagram-text); stroke-width: 1.5; rx: 3; }
+.diagram-chip-text { fill: var(--diagram-text); font-family: var(--diagram-mono); font-size: 12px; font-weight: 600; }
+.diagram-swatch    { stroke: var(--diagram-text); stroke-width: 1.5; rx: 3; }
+
+.diagram-cell      { fill: var(--diagram-bg); stroke: var(--diagram-text); stroke-width: 1.5; rx: 3; }
+.diagram-cell-text { fill: var(--diagram-text); font-family: var(--diagram-mono); font-size: 17px; font-weight: 600; }
+.diagram-cell[data-net].is-1 { stroke: var(--diagram-accent); fill: var(--diagram-panel); }
+.diagram-cell[data-net].is-1 + .diagram-cell-text { fill: var(--diagram-accent); }
+.diagram-brace     { fill: none; stroke: var(--diagram-muted); stroke-width: 1.5; stroke-linecap: round; }
+.diagram-value     { fill: var(--diagram-text); font-family: var(--diagram-mono); font-size: 14px; font-weight: 600; }
+.diagram-hexdigit  { fill: var(--diagram-accent); font-family: var(--diagram-mono); font-size: 20px; font-weight: 700; }
+
+.diagram-interactive .diagram-node { fill: var(--diagram-muted); }
+.diagram-interactive .diagram-wire[data-net].is-1  { stroke: var(--diagram-accent); stroke-width: 3; }
+.diagram-interactive .diagram-arrow[data-net].is-1 { fill: var(--diagram-accent); }
+.diagram-interactive .diagram-node[data-net].is-1  { fill: var(--diagram-accent); }
+.diagram-interactive .diagram-chip[data-net].is-1  { stroke: var(--diagram-accent); }
+.diagram-interactive .diagram-chip[data-net].is-1 + .diagram-chip-text { fill: var(--diagram-accent); }
+.diagram-interactive [data-net].is-1 .diagram-gate { stroke: var(--diagram-accent); }
+.diagram-interactive [data-net].is-1 + .diagram-gate-label { fill: var(--diagram-accent); }
+
+.diagram-interactive .diagram-wire[data-net].is-z { stroke: var(--diagram-muted); stroke-dasharray: 4 4; opacity: 0.5; }
+.diagram-interactive .diagram-arrow[data-net].is-z,
+.diagram-interactive .diagram-node[data-net].is-z { fill: var(--diagram-muted); opacity: 0.5; }
+.diagram-interactive .diagram-chip[data-net].is-z,
+.diagram-interactive .diagram-cell[data-net].is-z { stroke: var(--diagram-muted); fill: none; stroke-dasharray: 3 2; }
+.diagram-interactive .diagram-chip[data-net].is-z + .diagram-chip-text,
+.diagram-interactive .diagram-cell[data-net].is-z + .diagram-cell-text { fill: var(--diagram-muted); }
+
+.diagram-hit { fill: transparent; }
+.diagram-interactive.is-ready .diagram-toggle { cursor: pointer; }
+.diagram-interactive.is-ready .diagram-toggle:hover .diagram-chip,
+.diagram-interactive.is-ready .diagram-toggle:focus-visible .diagram-chip { stroke: var(--diagram-accent); stroke-width: 2.5; }
+.diagram-interactive.is-ready .diagram-toggle:hover .diagram-cell,
+.diagram-interactive.is-ready .diagram-toggle:focus-visible .diagram-cell { stroke: var(--diagram-accent); stroke-width: 2.5; }
+.diagram-toggle:focus { outline: none; }
+.diagram-interactive.is-ready .diagram-toggle:focus-visible .diagram-hit {
+  stroke: var(--diagram-accent); stroke-width: 1.5; stroke-dasharray: 3 2;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .diagram-interactive .diagram-wire, .diagram-interactive .diagram-arrow,
+  .diagram-interactive .diagram-node, .diagram-interactive .diagram-chip,
+  .diagram-interactive .diagram-cell, .diagram-interactive .diagram-gate {
+    transition: stroke 140ms ease, fill 140ms ease, stroke-width 140ms ease;
+  }
+}
+
+
+.diagram-tabs {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.6rem;
+  font-family: var(--diagram-mono); font-size: 12px;
+}
+.diagram-tab {
+  font: inherit; color: var(--diagram-muted);
+  background: transparent; border: 1px solid var(--diagram-muted);
+  border-radius: 4px; padding: 0.25rem 0.65rem; cursor: pointer;
+}
+.diagram-tab:hover { border-color: var(--diagram-accent); color: var(--diagram-accent); }
+.diagram-tab[aria-selected="true"] {
+  color: var(--diagram-accent); background: var(--diagram-panel);
+  border-color: var(--diagram-accent); font-weight: 600;
+}
+.diagram-tab:focus-visible { outline: 2px solid var(--diagram-accent); outline-offset: 2px; }
+
+.diagram-range {
+  width: 100%; display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem;
+  font-family: var(--diagram-mono); font-size: 12px; color: var(--diagram-muted);
+}
+.diagram-range input[type="range"] { flex: 1; accent-color: var(--diagram-accent); }
+.diagram-range-out { min-width: 3ch; text-align: right; color: var(--diagram-text); font-weight: 600; }
+
+[data-show][hidden] { display: none; }
+
+.diagram-box { fill: none; stroke: var(--diagram-muted); stroke-width: 2; opacity: 0.55; }
+.diagram-box.is-on { stroke: var(--diagram-accent); fill: var(--diagram-panel); opacity: 1; }
+.diagram-chan { fill: var(--diagram-muted); opacity: 0.35; }
+.diagram-chan.is-on { fill: var(--diagram-accent); opacity: 1; }
+.diagram-state {
+  fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 10px;
+  letter-spacing: 0.04em;
+}
+.diagram-dev.is-1 .diagram-state { fill: var(--diagram-accent); font-weight: 600; }
+
+.diagram-hl {
+  stroke: var(--diagram-accent); stroke-width: 9; opacity: 0.28;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.diagram-hl[hidden] { display: none; }
+
+.diagram-verdict {
+  fill: var(--diagram-muted); font-family: var(--diagram-mono); font-size: 11px;
+  line-height: 1.4;
+}
+
+body {
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  max-width: 1180px;
+  background: var(--diagram-bg);
+  color: var(--diagram-text);
+  font-family: var(--diagram-mono);
+  font-size: 14px;
+  line-height: 1.6;
+}
+h1 { font-size: 1.4rem; margin: 0 0 0.35rem; }
+h2 { font-size: 1.05rem; margin: 2.5rem 0 0.5rem; }
+a { color: var(--diagram-accent); }
+figure { margin: 0 0 1.5rem; }
+.diagram-back { margin-top: 2rem; font-size: 13px; }
+[data-diagram-slot] { overflow-x: auto; padding-bottom: 0.4rem; }
+[data-diagram-slot] svg { display: block; width: 100%; max-width: 760px; height: auto; margin: 0 auto; }
+
+</style>
+</head>
+<body class="diagram-scope">
+
+<h1>Float16</h1>
+
+<figure>
+<div data-diagram-slot>
+<svg data-logic="float16" class="diagram-interactive" data-state="f16" viewBox="0 0 560 198"
+     role="img" aria-label="An interactive IEEE 754 half precision float: sixteen clickable bits split into a sign, a biased exponent and a fraction, with the value they encode.">
+  <text x="33" y="16" class="diagram-idx" text-anchor="middle">15</text>
+  <text x="63" y="16" class="diagram-idx" text-anchor="middle">14</text>
+  <text x="93" y="16" class="diagram-idx" text-anchor="middle">13</text>
+  <text x="123" y="16" class="diagram-idx" text-anchor="middle">12</text>
+  <text x="153" y="16" class="diagram-idx" text-anchor="middle">11</text>
+  <text x="183" y="16" class="diagram-idx" text-anchor="middle">10</text>
+  <text x="213" y="16" class="diagram-idx" text-anchor="middle">9</text>
+  <text x="243" y="16" class="diagram-idx" text-anchor="middle">8</text>
+  <text x="273" y="16" class="diagram-idx" text-anchor="middle">7</text>
+  <text x="303" y="16" class="diagram-idx" text-anchor="middle">6</text>
+  <text x="333" y="16" class="diagram-idx" text-anchor="middle">5</text>
+  <text x="363" y="16" class="diagram-idx" text-anchor="middle">4</text>
+  <text x="393" y="16" class="diagram-idx" text-anchor="middle">3</text>
+  <text x="423" y="16" class="diagram-idx" text-anchor="middle">2</text>
+  <text x="453" y="16" class="diagram-idx" text-anchor="middle">1</text>
+  <text x="483" y="16" class="diagram-idx" text-anchor="middle">0</text>
+  <g class="diagram-toggle" data-input="s" data-init="0" role="button" tabindex="0" aria-label="sign bit, click to toggle">
+    <rect x="20" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="20" y="24" width="26" height="34" class="diagram-cell" data-net="s"/>
+    <text x="33" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="s">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="e4" data-init="1" role="button" tabindex="0" aria-label="exponent bit 4, click to toggle">
+    <rect x="50" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="50" y="24" width="26" height="34" class="diagram-cell" data-net="e4"/>
+    <text x="63" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="e4">1</text>
+  </g>
+  <g class="diagram-toggle" data-input="e3" data-init="0" role="button" tabindex="0" aria-label="exponent bit 3, click to toggle">
+    <rect x="80" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="80" y="24" width="26" height="34" class="diagram-cell" data-net="e3"/>
+    <text x="93" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="e3">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="e2" data-init="0" role="button" tabindex="0" aria-label="exponent bit 2, click to toggle">
+    <rect x="110" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="110" y="24" width="26" height="34" class="diagram-cell" data-net="e2"/>
+    <text x="123" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="e2">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="e1" data-init="1" role="button" tabindex="0" aria-label="exponent bit 1, click to toggle">
+    <rect x="140" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="140" y="24" width="26" height="34" class="diagram-cell" data-net="e1"/>
+    <text x="153" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="e1">1</text>
+  </g>
+  <g class="diagram-toggle" data-input="e0" data-init="0" role="button" tabindex="0" aria-label="exponent bit 0, click to toggle">
+    <rect x="170" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="170" y="24" width="26" height="34" class="diagram-cell" data-net="e0"/>
+    <text x="183" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="e0">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f9" data-init="0" role="button" tabindex="0" aria-label="fraction bit 9, click to toggle">
+    <rect x="200" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="200" y="24" width="26" height="34" class="diagram-cell" data-net="f9"/>
+    <text x="213" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f9">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f8" data-init="1" role="button" tabindex="0" aria-label="fraction bit 8, click to toggle">
+    <rect x="230" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="230" y="24" width="26" height="34" class="diagram-cell" data-net="f8"/>
+    <text x="243" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f8">1</text>
+  </g>
+  <g class="diagram-toggle" data-input="f7" data-init="0" role="button" tabindex="0" aria-label="fraction bit 7, click to toggle">
+    <rect x="260" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="260" y="24" width="26" height="34" class="diagram-cell" data-net="f7"/>
+    <text x="273" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f7">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f6" data-init="1" role="button" tabindex="0" aria-label="fraction bit 6, click to toggle">
+    <rect x="290" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="290" y="24" width="26" height="34" class="diagram-cell" data-net="f6"/>
+    <text x="303" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f6">1</text>
+  </g>
+  <g class="diagram-toggle" data-input="f5" data-init="0" role="button" tabindex="0" aria-label="fraction bit 5, click to toggle">
+    <rect x="320" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="320" y="24" width="26" height="34" class="diagram-cell" data-net="f5"/>
+    <text x="333" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f5">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f4" data-init="0" role="button" tabindex="0" aria-label="fraction bit 4, click to toggle">
+    <rect x="350" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="350" y="24" width="26" height="34" class="diagram-cell" data-net="f4"/>
+    <text x="363" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f4">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f3" data-init="0" role="button" tabindex="0" aria-label="fraction bit 3, click to toggle">
+    <rect x="380" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="380" y="24" width="26" height="34" class="diagram-cell" data-net="f3"/>
+    <text x="393" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f3">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f2" data-init="0" role="button" tabindex="0" aria-label="fraction bit 2, click to toggle">
+    <rect x="410" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="410" y="24" width="26" height="34" class="diagram-cell" data-net="f2"/>
+    <text x="423" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f2">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f1" data-init="0" role="button" tabindex="0" aria-label="fraction bit 1, click to toggle">
+    <rect x="440" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="440" y="24" width="26" height="34" class="diagram-cell" data-net="f1"/>
+    <text x="453" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f1">0</text>
+  </g>
+  <g class="diagram-toggle" data-input="f0" data-init="0" role="button" tabindex="0" aria-label="fraction bit 0, click to toggle">
+    <rect x="470" y="24" width="26" height="34" class="diagram-hit"/>
+    <rect x="470" y="24" width="26" height="34" class="diagram-cell" data-net="f0"/>
+    <text x="483" y="47" class="diagram-cell-text" text-anchor="middle" data-readout="f0">0</text>
+  </g>
+  <path d="M20,64 L20,72 L46,72 L46,64" class="diagram-brace"/>
+  <text x="33" y="88" class="diagram-label" text-anchor="middle">sign</text>
+  <path d="M50,64 L50,72 L196,72 L196,64" class="diagram-brace"/>
+  <text x="123" y="88" class="diagram-label" text-anchor="middle">exponent</text>
+  <path d="M200,64 L200,72 L496,72 L496,64" class="diagram-brace"/>
+  <text x="348" y="88" class="diagram-label" text-anchor="middle">fraction</text>
+  <text x="33" y="106" class="diagram-value" text-anchor="middle" data-readout="sgn">+</text>
+  <text x="123" y="106" class="diagram-value" text-anchor="middle" data-readout="eraw">18</text>
+  <text x="348" y="106" class="diagram-value" text-anchor="middle" data-readout="fraw">320</text>
+  <text x="160" y="136" class="diagram-label" text-anchor="end">exponent</text>
+  <text x="176" y="136" class="diagram-value" data-readout="exp">10010 -&gt; 18 - 15 = 3</text>
+  <text x="160" y="160" class="diagram-label" text-anchor="end">significand</text>
+  <text x="176" y="160" class="diagram-value" data-readout="sig">0101000000 -&gt; 1 + 320/1024 = 1.3125</text>
+  <text x="160" y="184" class="diagram-label" text-anchor="end">value</text>
+  <text x="176" y="184" class="diagram-value" data-readout="value">10.5</text>
+</svg>
+</div>
+</figure>
+
+<p class="diagram-back"><a href="../index.html">&larr; All figures</a></p>
+
+<script>
+globalThis.DiagramRuntime = (function () {
+  'use strict'
+
+  var SVG_NS = 'http://www.w3.org/2000/svg'
+
+  function bitwiseOp(i, fn) {
+    const nets = {}
+    let a = 0, b = 0
+    for (let k = 0; k < 8; k++) {
+      nets['a' + k] = i['a' + k]; nets['b' + k] = i['b' + k]
+      a += i['a' + k] << k; b += i['b' + k] << k
+    }
+    const r = fn(a, b) & 0xff
+    for (let k = 0; k < 8; k++) nets['r' + k] = (r >> k) & 1
+    nets.av = a; nets.bv = b; nets.rv = r
+    return nets
+  }
+
+  function maskFig(i, op) {
+    const nets = {}
+    let v = 0, n = 0
+    for (let b = 0; b < 8; b++) { nets['b' + b] = i['b' + b]; v += i['b' + b] << b }
+    for (let b = 0; b < 3; b++) { nets['n' + b] = i['n' + b]; n += i['n' + b] << b }
+    const mask = (1 << n) & 0xff
+    const shown = op === 'clear' ? (~mask & 0xff) : mask
+    const r = op === 'test' ? (v & mask)
+            : op === 'set' ? (v | mask)
+            : (v & ~mask & 0xff)
+    for (let b = 0; b < 8; b++) { nets['m' + b] = (shown >> b) & 1; nets['r' + b] = (r >> b) & 1 }
+    nets.n = n
+    nets.value = v
+    nets.mask = shown
+    nets.result = r
+    nets.shift = 'int mask = 1 << ' + n + ';'
+    nets.test = (v & mask) !== 0 ? 'true' : 'false'
+    return nets
+  }
+
+  const BUILTIN = {
+    'half-adder': (i) => ({ a: i.a, b: i.b, s: i.a ^ i.b, c: i.a & i.b }),
+
+    'fetch-execute': (i) => {
+      const PROG = [['SET', 0, 1], ['SET', 1, 2], ['ADD', 0, 1], ['JMP', 2]]
+      const BITS = ['0000 0001', '0010 0010', '0101 0000', '1000 0010']
+      const show = (ins) => ins[0] === 'SET' ? `SET R${ins[1]}, ${ins[2]}`
+                          : ins[0] === 'ADD' ? `ADD R${ins[1]}, R${ins[2]}`
+                          : `JMP ${ins[1]}`
+      let t = 0
+      for (let k = 15; k >= 0; k--) t = (t << 1) | (i['t' + k] || 0)
+      let ip = 0, next = 0, ir = '-', cur = null, at = -1
+      const r = [0, 0]
+      const nets = { f: 0, d: 0, e: 0, ipchg: 0, irchg: 0, r0chg: 0, r1chg: 0, on: 1 }
+      for (let s = 1; s <= t; s++) {
+        const phase = (s - 1) % 4
+        nets.f = nets.d = nets.e = nets.ipchg = nets.irchg = nets.r0chg = nets.r1chg = 0
+        at = -1
+        if (phase === 0) {
+          nets.ipchg = next !== ip ? 1 : 0
+          ip = next
+          nets.f = 1
+        } else if (phase === 1) {
+          at = ip; cur = PROG[ip]; ir = BITS[ip]
+          nets.f = 1; nets.irchg = 1
+        } else if (phase === 2) {
+          ir = show(cur)
+          nets.d = 1; nets.irchg = 1
+        } else {
+          nets.e = 1
+          next = cur[0] === 'JMP' ? cur[1] : ip + 1
+          if (cur[0] !== 'JMP') {
+            r[cur[1]] = cur[0] === 'SET' ? cur[2] : (r[cur[1]] + r[cur[2]]) & 0xff
+            nets['r' + cur[1] + 'chg'] = 1
+          }
+        }
+      }
+      for (let k = 0; k < 4; k++) { nets['m' + k] = k === at ? 1 : 0; nets['p' + k] = k === ip ? 1 : 0 }
+      nets.ip = ip; nets.ir = ir; nets.r0 = r[0]; nets.r1 = r[1]
+      nets.playlabel = i.playing ? 'pause' : 'play'
+      return nets
+    },
+
+    'scott-alu': (i) => {
+      const nets = {}
+      let a = 0, b = 0
+      for (let k = 0; k < 8; k++) {
+        nets['a' + k] = i['a' + k]; nets['b' + k] = i['b' + k]
+        a += i['a' + k] << k; b += i['b' + k] << k
+      }
+      const op = ((i.o2 || 0) << 2) | ((i.o1 || 0) << 1) | (i.o0 || 0)
+      const RES = [[(a + b) & 0xff, (a + b) >> 8], [a >> 1, a & 1], [(a << 1) & 0xff, a >> 7],
+                   [~a & 0xff, 0], [a & b, 0], [a | b, 0], [a ^ b, 0], [null, 0]]
+      const [out, carry] = RES[op]
+      for (let k = 0; k < 8; k++) {
+        nets['sel' + k] = +(k === op)
+        nets['acc' + k] = out === null ? null : (out >> k) & 1
+      }
+      nets.accin = out === null ? 0 : 1
+      nets.av = a; nets.bv = b; nets.accv = out === null ? '-' : out
+      nets.fc = carry; nets.fa = +(a > b); nets.fe = +(a === b); nets.fz = +(out === 0)
+      return nets
+    },
+
+    'alu-not': (i) => bitwiseOp(i, (a) => ~a),
+    'alu-and': (i) => bitwiseOp(i, (a, b) => a & b),
+    'alu-or': (i) => bitwiseOp(i, (a, b) => a | b),
+    'alu-xor': (i) => bitwiseOp(i, (a, b) => a ^ b),
+    'alu-shl': (i) => { const nets = bitwiseOp(i, (a) => a << 1); nets.c = (nets.av >> 7) & 1; return nets },
+    'alu-shr': (i) => { const nets = bitwiseOp(i, (a) => a >> 1); nets.c = nets.av & 1; return nets },
+    'alu-add': (i) => {
+      const nets = bitwiseOp(i, (a, b) => a + b)
+      let c = 0
+      for (let k = 0; k < 8; k++) {
+        c = (nets['a' + k] + nets['b' + k] + c) >> 1
+        nets['c' + k] = c
+      }
+      nets.c = c
+      return nets
+    },
+
+    'alu-op-select': (i) => {
+      const op = ((i.o2 || 0) << 2) | ((i.o1 || 0) << 1) | (i.o0 || 0)
+      const nets = { o0: i.o0, o1: i.o1, o2: i.o2 }
+      for (let k = 0; k < 8; k++) nets['d' + k] = +(k === op)
+      return nets
+    },
+
+    'register-gates': {
+      init: () => ({ m: 0 }),
+      solve: (i, st) => {
+        let iv = 0
+        for (let k = 0; k < 8; k++) iv |= i['i' + k] << k
+        if (i.s) st.m = iv
+        const ov = i.e ? st.m : 0
+        const nets = { s: i.s, e: i.e, iv: iv, mv: st.m, ov: ov }
+        for (let k = 0; k < 8; k++) {
+          nets['i' + k] = i['i' + k]
+          nets['w' + k] = i['i' + k] & i.s
+          nets['m' + k] = (st.m >> k) & 1
+          nets['o' + k] = (ov >> k) & 1
+        }
+        return nets
+      },
+    },
+
+    'bus-transfer': (i) => {
+      const read = (p) => { let v = 0; for (let k = 0; k < 8; k++) v |= i[p + k] << k; return v }
+      const write = (p, v) => { for (let k = 0; k < 8; k++) i[p + k] = (v >> k) & 1 }
+      const bus = (i.e1 ? read('a') : 0) | (i.e2 ? read('b') : 0)
+      if (i.s1) write('a', bus)
+      if (i.s2) write('b', bus)
+      const nets = { e1: i.e1, s1: i.s1, e2: i.e2, s2: i.s2, busv: bus, av: read('a'), bv: read('b') }
+      for (let k = 0; k < 8; k++) {
+        nets['a' + k] = i['a' + k]
+        nets['b' + k] = i['b' + k]
+        nets['bus' + k] = (bus >> k) & 1
+      }
+      return nets
+    },
+
+    'enabler-8': (i) => {
+      const nets = { e: i.e }
+      for (let k = 0; k < 8; k++) { nets['i' + k] = i['i' + k]; nets['q' + k] = i['i' + k] & i.e }
+      return nets
+    },
+
+    'decoder-2x4': (i) => {
+      const k = (i.a << 1) | i.b
+      return { a: i.a, b: i.b, na: 1 - i.a, nb: 1 - i.b,
+               d0: +(k === 0), d1: +(k === 1), d2: +(k === 2), d3: +(k === 3) }
+    },
+
+    'memory-cell': (i) => {
+      const x = i.v & i.h, sa = x & i.s, ea = x & i.e
+      const status = !x ? 'not selected: s and e do nothing'
+        : sa && ea ? 'selected: s and e together is not allowed'
+        : sa ? 'selected: write, the bus value is set into R'
+        : ea ? 'selected: read, R is enabled onto the bus'
+        : 'selected: waiting for s or e'
+      return { v: i.v, h: i.h, s: i.s, e: i.e, x, sa, ea, io: sa | ea, bus: ea, status }
+    },
+
+    'memory-grid': (i) => {
+      const nets = {}
+      let addr = 0
+      for (let k = 7; k >= 0; k--) { nets['a' + k] = i['a' + k] || 0; addr = (addr << 1) | nets['a' + k] }
+      const row = addr >> 4, col = addr & 15
+      for (let k = 0; k < 16; k++) { nets['r' + k] = +(k === row); nets['c' + k] = +(k === col) }
+      for (let r = 0; r < 16; r++) {
+        for (let c = 0; c < 16; c++) {
+          const on = r === row && c === col
+          nets['m' + r + '_' + c] = +on
+          nets['f' + r + '_' + c] = on ? 'var(--diagram-accent)' : 'var(--diagram-bg)'
+        }
+      }
+      const nib = (v) => v.toString(2).padStart(4, '0')
+      nets.summary = 'address ' + nib(row) + ' ' + nib(col) + ' = ' + addr + ': row ' + row + ', column ' + col
+      return nets
+    },
+
+    'clock-stepper': (i) => {
+      let t = 0
+      for (let k = 15; k >= 0; k--) t = (t << 1) | (i['t' + k] || 0)
+      const q = t % 4, step = Math.floor(t / 4) % 6 + 1
+      const clk = +(q < 2), clkd = +(q === 1 || q === 2)
+      const nets = { clk, clkd, clke: clk | clkd, clks: clk & clkd, playlabel: i.playing ? 'pause' : 'play' }
+      for (let k = 0; k < 4; k++) nets['q' + k] = +(k === q)
+      for (let k = 1; k <= 6; k++) nets['s' + k] = +(k === step)
+      return nets
+    },
+
+    'byte-8': (i) => {
+      const nets = {}
+      let v = 0
+      for (let b = 0; b < 8; b++) { nets['b' + b] = i['b' + b]; v += i['b' + b] << b }
+      nets.unsigned = v
+      nets.signbit = (v & 0x80) ? -(v & 0x7f) : v
+      nets.twos = (v & 0x80) ? v - 256 : v
+      return nets
+    },
+
+    'binary-to-hex': (i) => {
+      const bits = Object.keys(i).length
+      const nibbles = bits / 4
+      const nets = {}
+      let all = ''
+      for (let k = 0; k < nibbles; k++) {
+        let d = 0
+        for (let j = 0; j < 4; j++) {
+          const idx = bits - 1 - (k * 4 + j)
+          nets['b' + idx] = i['b' + idx]
+          d = (d << 1) | i['b' + idx]
+        }
+        nets['h' + k] = d.toString(16).toUpperCase()
+        all += nets['h' + k]
+      }
+      nets.hex = '0x' + (all.replace(/^0+/, '') || '0')
+      return nets
+    },
+
+    'ascii-8': (i) => {
+      const CTRL = ['NUL', 'SOH', 'STX', 'ETX', 'EOT', 'ENQ', 'ACK', 'BEL', 'BS', 'TAB', 'LF', 'VT',
+                    'FF', 'CR', 'SO', 'SI', 'DLE', 'DC1', 'DC2', 'DC3', 'DC4', 'NAK', 'SYN', 'ETB',
+                    'CAN', 'EM', 'SUB', 'ESC', 'FS', 'GS', 'RS', 'US']
+      const nets = {}
+      let v = 0
+      for (let b = 0; b < 8; b++) { nets['b' + b] = i['b' + b]; v += i['b' + b] << b }
+      nets.dec = v
+      nets.char = v > 127 ? 'not ASCII'
+                : v === 127 ? 'DEL'
+                : v === 32 ? 'SP'
+                : v < 32 ? CTRL[v]
+                : String.fromCharCode(v)
+      return nets
+    },
+
+    'rgb-24': (i) => {
+      const nets = {}
+      const channel = (p) => {
+        let v = 0
+        for (let b = 0; b < 8; b++) { nets[p + b] = i[p + b]; v += i[p + b] << b }
+        return v
+      }
+      const r = channel('r'), g = channel('g'), b = channel('b')
+      const hx = (n) => n.toString(16).toUpperCase().padStart(2, '0')
+      nets.r = r; nets.g = g; nets.b = b
+      nets.hex = '#' + hx(r) + hx(g) + hx(b)
+      nets.swatch = nets.hex
+      return nets
+    },
+
+    'float16': (i) => {
+      const nets = { s: i.s }
+      let E = 0, F = 0
+      for (let b = 4; b >= 0; b--) { nets['e' + b] = i['e' + b]; E = (E << 1) | i['e' + b] }
+      for (let b = 9; b >= 0; b--) { nets['f' + b] = i['f' + b]; F = (F << 1) | i['f' + b] }
+      const sign = i.s ? -1 : 1
+      const ebits = E.toString(2).padStart(5, '0')
+      const fbits = F.toString(2).padStart(10, '0')
+      nets.sgn = i.s ? '-' : '+'
+      nets.eraw = E
+      nets.fraw = F
+      if (E === 31) {
+        nets.exp = ebits + ' -> reserved'
+        nets.sig = fbits + ' -> reserved'
+        nets.value = F === 0 ? (i.s ? '-Infinity' : 'Infinity') : 'NaN'
+      } else if (E === 0) {
+        nets.exp = ebits + ' -> subnormal, -14'
+        nets.sig = fbits + ' -> 0 + ' + F + '/1024 = ' + (F / 1024)
+        nets.value = String(sign * Math.pow(2, -14) * (F / 1024))
+      } else {
+        nets.exp = ebits + ' -> ' + E + ' - 15 = ' + (E - 15)
+        nets.sig = fbits + ' -> 1 + ' + F + '/1024 = ' + (1 + F / 1024)
+        nets.value = String(sign * Math.pow(2, E - 15) * (1 + F / 1024))
+      }
+
+      if (E === 31) {
+        nets.digits = 'reserved'
+        nets.expPow = 'reserved'
+        nets.floated = 'reserved'
+      } else {
+        const frac = F.toString(2).padStart(10, '0')
+        const lead = E === 0 ? '0' : '1'
+        const digits = lead + frac
+        const exp = E === 0 ? -14 : E - 15
+        const k = 1 + exp
+        nets.digits = (i.s ? '-' : '') + lead + '.' + frac
+        nets.expPow = '2^' + exp
+        nets.floated = (i.s ? '-' : '')
+          + (k <= 0 ? '0.' + '0'.repeat(-k) + digits
+             : k >= digits.length ? digits + '0'.repeat(k - digits.length) + '.0'
+             : digits.slice(0, k) + '.' + digits.slice(k))
+      }
+      return nets
+    },
+
+
+    'byte-bools': (i) => {
+      const nets = {}
+      let v = 0
+      for (let b = 0; b < 8; b++) {
+        nets['b' + b] = i['b' + b]
+        nets['tf' + b] = i['b' + b] ? 'T' : 'F'
+        v += i['b' + b] << b
+      }
+      nets.number = v
+      return nets
+    },
+
+    'bitwise-and': (i) => bitwiseOp(i, (a, b) => a & b),
+    'bitwise-or': (i) => bitwiseOp(i, (a, b) => a | b),
+    'bitwise-xor': (i) => bitwiseOp(i, (a, b) => a ^ b),
+
+    'bit-shift': (i) => {
+      const nets = {}
+      let v = 0, k = 0
+      for (let b = 0; b < 8; b++) { nets['b' + b] = i['b' + b]; v += i['b' + b] << b }
+      for (let b = 0; b < 3; b++) { nets['k' + b] = i['k' + b]; k += i['k' + b] << b }
+      nets.k = k
+      const signed = (n) => (n & 0x80) ? n - 256 : n
+      nets.signed = signed(v)
+      const spread = (p, n) => {
+        for (let b = 0; b < 8; b++) nets[p + b] = (n >> b) & 1
+        nets[p + 'v'] = signed(n)
+      }
+      spread('l', (v << k) & 0xff)
+      spread('r', ((v >> k) | ((v & 0x80) ? (0xff00 >> k) : 0)) & 0xff)
+      spread('u', (v & 0xff) >>> k)
+      return nets
+    },
+
+    'mask-build': (i) => {
+      const nets = {}
+      let n = 0
+      for (let b = 0; b < 3; b++) { nets['n' + b] = i['n' + b]; n += i['n' + b] << b }
+      for (let b = 0; b < 8; b++) nets['one' + b] = b === 0 ? 1 : 0
+      const mask = (1 << n) & 0xff
+      for (let b = 0; b < 8; b++) nets['m' + b] = (mask >> b) & 1
+      nets.n = n
+      nets.mask = mask
+      return nets
+    },
+
+    'mask-apply': (i) => {
+      const nets = {}
+      let v = 0, m = 0
+      for (let b = 0; b < 8; b++) {
+        nets['b' + b] = i['b' + b]; nets['m' + b] = i['m' + b]
+        v += i['b' + b] << b; m += i['m' + b] << b
+      }
+      const tested = v & m, set = v | m, cleared = v & (~m & 0xff)
+      nets.value = v; nets.mask = m
+      nets.test = tested ? 'true' : 'false'
+      nets.setv = set; nets.clearv = cleared
+      const spread = (p, x) => { for (let b = 0; b < 8; b++) nets[p + b] = (x >> b) & 1 }
+      spread('t', tested); spread('s', set); spread('c', cleared)
+      return nets
+    },
+
+    'mask-test': (i) => maskFig(i, 'test'),
+    'mask-set': (i) => maskFig(i, 'set'),
+    'mask-clear': (i) => maskFig(i, 'clear'),
+
+    'full-adder': (i) => {
+      const x1 = i.a ^ i.b
+      return { a: i.a, b: i.b, cin: i.cin, x1,
+               s: x1 ^ i.cin, n1: x1 & i.cin, n2: i.a & i.b,
+               cout: (x1 & i.cin) | (i.a & i.b) }
+    },
+
+    'ripple-carry': (i) => {
+      const bits = Object.keys(i).filter((k) => k[0] === 'a').length
+      const nets = { c0: 0 }
+      let carry = 0
+      for (let b = 0; b < bits; b++) {
+        const a = i['a' + b], bb = i['b' + b]
+        nets['a' + b] = a
+        nets['b' + b] = bb
+        nets['s' + b] = a ^ bb ^ carry
+        carry = (a & bb) | (a & carry) | (bb & carry)
+        nets['c' + (b + 1)] = carry
+      }
+      return nets
+    },
+
+
+    'nmos-inverter': (i) => ({
+      in: i.in,
+      chan: i.in,
+      out: i.in ? 0 : 1,
+      chanText: i.in ? 'ON' : 'OFF',
+      path: i.in ? 1 : 0,
+      pull: i.in ? 0 : 1,
+      verdict: i.in
+        ? 'Static current: +5 is wired to ground through R and the channel. That current becomes heat, and half the input cases waste power this way.'
+        : 'No static current right now. The channel is off, so nothing completes a path from +5 to ground.',
+    }),
+
+    'nand-resistor': (i) => {
+      const both = i.a & i.b
+      return {
+        a: i.a, b: i.b,
+        chanA: i.a, chanB: i.b,
+        chanAText: i.a ? 'ON' : 'OFF',
+        chanBText: i.b ? 'ON' : 'OFF',
+        mid: i.b ? 0 : null,
+        out: both ? 0 : 1,
+        path: both ? 1 : 0,
+        pull: both ? 0 : 1,
+        verdict: both
+          ? 'Both channels conduct, so the output is pulled to ground -- and +5 is now wired to ground through R. This case burns power for as long as it lasts.'
+          : 'The series path is broken, so the resistor holds the output at 1 and no current flows.',
+      }
+    },
+
+    'nand-cmos': (i) => {
+      const both = i.a & i.b
+      return {
+        a: i.a, b: i.b,
+        pA: i.a ? 0 : 1, pB: i.b ? 0 : 1,
+        nA: i.a, nB: i.b,
+        pAText: i.a ? 'OFF' : 'ON', pBText: i.b ? 'OFF' : 'ON',
+        nAText: i.a ? 'ON' : 'OFF', nBText: i.b ? 'ON' : 'OFF',
+        mid: i.b ? 0 : null,
+        out: both ? 0 : 1,
+        pathUp: both ? 0 : 1,
+        pathDown: both ? 1 : 0,
+        verdict: both
+          ? 'Both NMOS conduct and both PMOS are off, so the output is driven to 0 through a path to ground alone.'
+          : 'At least one PMOS conducts and the series NMOS path is broken, so the output is driven to 1. Either way exactly one side conducts, so no current crosses from VDD to GND and nothing is wasted holding the value.',
+    }
+    },
+
+    'sram-loop': (i) => ({
+      q: i.q, qb: i.q ? 0 : 1,
+      qText: String(i.q), qbText: i.q ? '0' : '1',
+      verdict: 'Each inverter drives the other with exactly what it needs to keep driving. Stable either way, which means it is storing one bit.',
+    }),
+
+    'sram-cell': {
+      init: () => ({ q: 0 }),
+      solve: (i, s) => {
+        if (i.w) s.q = i.i
+        const qb = s.q ? 0 : 1
+        const pull = i.r && qb
+        return {
+          i: i.i, w: i.w, r: i.r,
+          q: s.q, qb: qb,
+          qText: String(s.q), qbText: String(qb),
+          mid: i.r ? (qb ? 0 : null) : null,
+          out: pull ? 0 : 1,
+          dOn: i.r, cOn: qb, eOn: i.w,
+          dText: i.r ? 'ON' : 'OFF',
+          cText: qb ? 'ON' : 'OFF',
+          eText: i.w ? 'ON' : 'OFF',
+          verdict: i.w
+            ? 'Write is on, so the incoming value is driven into the loop. The write channel is larger than the feedback path, so it wins.'
+            : 'Nothing is driving the loop, so it holds its value with no clock and no refresh. That is what static means in static RAM.',
+        }
+      },
+    },
+
+    'bits-n': (i) => {
+      const nets = {}
+      const width = Object.keys(i).filter((k) => /^b\d+$/.test(k)).length
+      let v = 0
+      for (let b = 0; b < width; b++) { nets['b' + b] = i['b' + b]; v += i['b' + b] << b }
+      const top = 1 << (width - 1)
+      nets.width = width
+      nets.unsigned = v
+      nets.signbit = (v & top) ? -(v & (top - 1)) : v
+      nets.twos = (v & top) ? v - (top << 1) : v
+      return nets
+    },
+  }
+
+  var SOLVERS = {}
+
+  function define(name, spec) {
+    SOLVERS[name] = typeof spec === 'function'
+      ? { init: function () { return {} }, solve: function (i) { return spec(i) } }
+      : spec
+  }
+
+  Object.keys(BUILTIN).forEach(function (name) { define(name, BUILTIN[name]) })
+
+  var RESERVED = ['d', 'o', 'g', 'f', 'escape', 'space', 'enter', 'tab',
+                  'arrowleft', 'arrowright', 'arrowup', 'arrowdown',
+                  'pageup', 'pagedown', 'home', 'end']
+
+  function normKey(k) {
+    if (k === ' ' || k === 'Spacebar') return 'space'
+    return String(k).trim().toLowerCase()
+  }
+
+
+  function wrapInto(el, text, width) {
+    if (el.__diagramWrapped === text) return
+    el.__diagramWrapped = text
+    var words = text.split(/\s+/).filter(Boolean)
+    var lines = []
+    var line = ''
+    words.forEach(function (w) {
+      if (!line) { line = w } else if (line.length + 1 + w.length <= width) { line += ' ' + w } else { lines.push(line); line = w }
+    })
+    if (line) lines.push(line)
+    if (!lines.length) lines = ['']
+    var x = el.getAttribute('x') || '0'
+    var dy = el.getAttribute('data-wrap-dy') || '1.25em'
+    while (el.firstChild) el.removeChild(el.firstChild)
+    lines.forEach(function (ln, k) {
+      var t = document.createElementNS(SVG_NS, 'tspan')
+      t.setAttribute('x', x)
+      t.setAttribute('dy', k === 0 ? '0' : dy)
+      t.textContent = ln
+      el.appendChild(t)
+    })
+  }
+
+  function paintSvg(svg, nets, inputs) {
+    svg.querySelectorAll('[data-net]').forEach(function (el) {
+      var v = nets[el.getAttribute('data-net')]
+      el.classList.toggle('is-1', v === 1)
+      el.classList.toggle('is-z', v === null)
+    })
+
+    svg.querySelectorAll('[data-readout]').forEach(function (el) {
+      var v = nets[el.getAttribute('data-readout')]
+      var text = v === null ? (el.getAttribute('data-readout-z') || 'Z')
+               : v === undefined ? ''
+               : String(v)
+      var wrap = Number(el.getAttribute('data-wrap'))
+      if (wrap > 0) wrapInto(el, text, wrap)
+      else if (el.textContent !== text) el.textContent = text
+    })
+
+    svg.querySelectorAll('[data-fill]').forEach(function (el) {
+      var v = nets[el.getAttribute('data-fill')]
+      if (v != null) el.style.fill = String(v)
+    })
+
+    svg.querySelectorAll('[data-input]').forEach(function (el) {
+      el.setAttribute('aria-pressed', inputs[el.getAttribute('data-input')] === 1 ? 'true' : 'false')
+    })
+
+    svg.querySelectorAll('[data-on]').forEach(function (el) {
+      var on = !!nets[el.getAttribute('data-on')]
+      el.classList.toggle('is-on', on)
+      el.classList.toggle('is-off', !on)
+    })
+
+    svg.querySelectorAll('[data-show]').forEach(function (el) {
+      if (nets[el.getAttribute('data-show')]) el.removeAttribute('hidden')
+      else el.setAttribute('hidden', '')
+    })
+  }
+
+
+  var mountCount = 0
+  var stageUid = 0
+
+  function mount(root, opts) {
+    opts = opts || {}
+    root = root || document
+    mountCount++
+
+    var teardown = []
+    var groups = {}
+    var stages = []
+    var keys = {}
+
+    root.querySelectorAll('svg[data-logic]').forEach(function (svg) {
+      var logic = svg.getAttribute('data-logic')
+      var named = svg.getAttribute('data-solver')
+      var spec = (named && SOLVERS[named]) || SOLVERS[logic] ||
+                 (/^ripple-carry-\d+$/.test(logic) ? SOLVERS['ripple-carry'] : null)
+      if (!spec) return
+
+      var key = svg.getAttribute('data-state') || logic
+      var g = groups[key]
+      if (!g) {
+        g = groups[key] = {
+          key: key, logic: logic, spec: spec, solve: spec.solve,
+          inputs: {}, initial: {}, state: spec.init(),
+          nets: {}, svgs: [], sliders: [], subs: [],
+          byLogic: {},
+        }
+      }
+      if (!g.byLogic[logic]) g.byLogic[logic] = { spec: spec, state: spec.init(), nets: {} }
+      svg.__diagramLogic = logic
+      g.svgs.push(svg)
+
+      svg.querySelectorAll('[data-input]').forEach(function (el) {
+        var name = el.getAttribute('data-input')
+        g.inputs[name] = el.getAttribute('data-init') === '1' ? 1 : 0
+        g.initial[name] = g.inputs[name]
+      })
+    })
+
+    Object.keys(groups).forEach(function (key) {
+      var g = groups[key]
+
+      g.repaint = function () {
+        Object.keys(g.byLogic).forEach(function (name) {
+          var e = g.byLogic[name]
+          e.nets = e.spec.solve(g.inputs, e.state)
+        })
+        var nets = g.byLogic[g.logic].nets
+        g.nets = nets
+        g.sliders.forEach(function (sl) {
+          var v = sl.bits.reduce(function (acc, nm) { return (acc << 1) | g.inputs[nm] }, 0)
+          var pos = sl.flip ? sl.lo + sl.hi - v : v
+          if (Number(sl.el.value) !== pos) sl.el.value = String(pos)
+          sl.out.textContent = String(v)
+        })
+        g.svgs.forEach(function (svg) {
+          paintSvg(svg, g.byLogic[svg.__diagramLogic].nets, g.inputs)
+        })
+        g.subs.slice().forEach(function (fn) { fn(nets, g.inputs, key) })
+        if (opts.onpaint) opts.onpaint(nets, g.inputs, key)
+        return nets
+      }
+
+      g.set = function (name, value) { g.inputs[name] = value ? 1 : 0; return g.repaint() }
+      g.toggle = function (name) { g.inputs[name] = g.inputs[name] ? 0 : 1; return g.repaint() }
+      g.reset = function () {
+        Object.keys(g.initial).forEach(function (n) { g.inputs[n] = g.initial[n] })
+        Object.keys(g.byLogic).forEach(function (name) {
+          g.byLogic[name].state = g.byLogic[name].spec.init()
+        })
+        g.state = g.byLogic[g.logic].state
+        return g.repaint()
+      }
+      g.onpaint = function (fn) {
+        g.subs.push(fn)
+        return function () {
+          var k = g.subs.indexOf(fn)
+          if (k !== -1) g.subs.splice(k, 1)
+        }
+      }
+
+      g.svgs.forEach(function (svg) {
+        var spec = svg.getAttribute('data-range-bits')
+        if (!spec) return
+        var bits = spec.split(',').map(function (b) { return b.trim() })
+        var host = svg.closest('[data-diagram-slot]') || svg.parentNode
+        if (!host || !host.parentNode) return
+        var row = document.createElement('div')
+        row.className = 'diagram-range'
+        row.style.maxWidth = host.style ? (host.style.maxWidth || '') : ''
+        var label = svg.getAttribute('data-range-label') || 'value'
+        var lab = document.createElement('span')
+        lab.textContent = label
+        var el = document.createElement('input')
+        el.type = 'range'
+        el.min = svg.getAttribute('data-range-min') || '0'
+        el.max = svg.getAttribute('data-range-max') || String((1 << bits.length) - 1)
+        el.step = '1'
+        el.setAttribute('aria-label', label)
+        var out = document.createElement('span')
+        out.className = 'diagram-range-out'
+        row.append(lab, el, out)
+        host.parentNode.insertBefore(row, host.nextSibling)
+        var lo = Number(el.min), hi = Number(el.max)
+        var flip = svg.getAttribute('data-range-reverse') === '1'
+        var seed = Number(svg.getAttribute('data-range-init') || 0)
+        for (var s = bits.length - 1; s >= 0; s--) {
+          if (g.inputs[bits[s]] === undefined) {
+            g.inputs[bits[s]] = seed & 1
+            g.initial[bits[s]] = seed & 1
+          }
+          seed >>= 1
+        }
+        var onInput = function () {
+          var v = Number(el.value)
+          if (flip) v = lo + hi - v
+          for (var k = bits.length - 1; k >= 0; k--) { g.inputs[bits[k]] = v & 1; v >>= 1 }
+          g.repaint()
+        }
+        el.addEventListener('input', onInput)
+        teardown.push(function () { el.removeEventListener('input', onInput); row.remove() })
+        g.sliders.push({ el: el, out: out, bits: bits, flip: flip, lo: lo, hi: hi })
+      })
+
+      g.svgs.forEach(function (svg) {
+        var spec = svg.getAttribute('data-pick-bits')
+        if (!spec) return
+        var bits = spec.split(',').map(function (b) { return b.trim() })
+        var seed = Number(svg.getAttribute('data-pick-init') || 0)
+        for (var s = bits.length - 1; s >= 0; s--) {
+          if (g.inputs[bits[s]] === undefined) { g.inputs[bits[s]] = seed & 1; g.initial[bits[s]] = seed & 1 }
+          seed >>= 1
+        }
+        svg.querySelectorAll('[data-pick]').forEach(function (el) {
+          var v = Number(el.getAttribute('data-pick'))
+          var go = function () {
+            for (var k = bits.length - 1, x = v; k >= 0; k--) { g.inputs[bits[k]] = x & 1; x >>= 1 }
+            g.repaint()
+          }
+          var onKey = function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); go() }
+          }
+          el.addEventListener('click', go)
+          el.addEventListener('keydown', onKey)
+          teardown.push(function () {
+            el.removeEventListener('click', go)
+            el.removeEventListener('keydown', onKey)
+          })
+        })
+      })
+
+      g.svgs.forEach(function (svg) {
+        var spec = svg.getAttribute('data-step-bits')
+        if (!spec) return
+        var bits = spec.split(',').map(function (b) { return b.trim() })
+        var max = Number(svg.getAttribute('data-step-max') || String((1 << bits.length) - 1))
+        var ms = Number(svg.getAttribute('data-play-ms') || '1000')
+        var playNet = svg.getAttribute('data-play-net')
+        bits.forEach(function (nm) {
+          if (g.inputs[nm] === undefined) { g.inputs[nm] = 0; g.initial[nm] = 0 }
+        })
+        if (playNet) { g.inputs[playNet] = 0; g.initial[playNet] = 0 }
+        var timer = null
+        var setPlaying = function (on) {
+          if (on && !timer) timer = setInterval(function () { step(1) }, ms)
+          if (!on && timer) { clearInterval(timer); timer = null }
+          if (playNet) { g.inputs[playNet] = on ? 1 : 0; g.repaint() }
+        }
+        var step = function (by) {
+          var v = bits.reduce(function (acc, nm) { return (acc << 1) | g.inputs[nm] }, 0)
+          v = Math.max(0, Math.min(max, v + by))
+          var atEnd = v === max
+          for (var k = bits.length - 1; k >= 0; k--) { g.inputs[bits[k]] = v & 1; v >>= 1 }
+          g.repaint()
+          if (atEnd && timer) setPlaying(false)
+        }
+        teardown.push(function () { if (timer) clearInterval(timer); timer = null })
+        var onPress = function (el, fn) {
+          var onKey = function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); fn() }
+          }
+          el.addEventListener('click', fn)
+          el.addEventListener('keydown', onKey)
+          teardown.push(function () {
+            el.removeEventListener('click', fn)
+            el.removeEventListener('keydown', onKey)
+          })
+        }
+        svg.querySelectorAll('[data-play]').forEach(function (el) {
+          onPress(el, function () { setPlaying(!timer) })
+        })
+        svg.querySelectorAll('[data-step]').forEach(function (el) {
+          var by = Number(el.getAttribute('data-step'))
+          var go = function () { setPlaying(false); step(by) }
+          var onKey = function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); go() }
+          }
+          el.addEventListener('click', go)
+          el.addEventListener('keydown', onKey)
+          teardown.push(function () {
+            el.removeEventListener('click', go)
+            el.removeEventListener('keydown', onKey)
+          })
+        })
+      })
+
+      g.svgs.forEach(function (svg) {
+        svg.querySelectorAll('[data-input]').forEach(function (el) {
+          var name = el.getAttribute('data-input')
+          var flip = function () { g.toggle(name) }
+          var onKey = function (e) {
+            if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); flip() }
+          }
+          el.addEventListener('click', flip)
+          el.addEventListener('keydown', onKey)
+          teardown.push(function () {
+            el.removeEventListener('click', flip)
+            el.removeEventListener('keydown', onKey)
+          })
+        })
+        svg.classList.add('is-ready')
+        teardown.push(function () { svg.classList.remove('is-ready') })
+      })
+    })
+
+    if (opts.stages !== false) {
+      root.querySelectorAll('[data-stages]').forEach(function (box, boxIndex) {
+        var panes = Array.prototype.filter.call(box.children, function (c) {
+          return c.nodeType === 1 && c.hasAttribute('data-stage')
+        })
+        if (!panes.length) panes = Array.prototype.slice.call(box.querySelectorAll('[data-stage]'))
+        if (panes.length < 2) return
+
+        var bar = document.createElement('div')
+        bar.className = 'diagram-tabs'
+        bar.setAttribute('role', 'tablist')
+        var uid = ++stageUid
+        var made = []
+        var tabs = panes.map(function (pane, i) {
+          if (!pane.id) { pane.id = 'diagram-stage-' + uid + '-' + i; made.push(pane) }
+          var b = document.createElement('button')
+          b.type = 'button'
+          b.className = 'diagram-tab'
+          b.setAttribute('role', 'tab')
+          b.setAttribute('aria-controls', pane.id)
+          b.textContent = pane.getAttribute('data-stage-label') || String(i + 1)
+          bar.appendChild(b)
+          return b
+        })
+        box.insertBefore(bar, box.firstChild)
+
+        var owner = boxIndex === 0 && opts.hash !== false &&
+                    typeof location !== 'undefined'
+
+        var ctlStage = { el: box, panes: panes, tabs: tabs, index: 0 }
+
+        ctlStage.show = function (i, viaUser) {
+          if (i < 0 || i >= panes.length) return
+          ctlStage.index = i
+          panes.forEach(function (p, k) {
+            if (k === i) p.removeAttribute('hidden')
+            else p.setAttribute('hidden', '')
+          })
+          tabs.forEach(function (t, k) {
+            t.setAttribute('aria-selected', k === i ? 'true' : 'false')
+            t.tabIndex = k === i ? 0 : -1
+            t.classList.toggle('is-active', k === i)
+          })
+          if (owner && viaUser) {
+            if (history.replaceState) history.replaceState(null, '', '#stage-' + (i + 1))
+            else location.hash = 'stage-' + (i + 1)
+          }
+        }
+
+        tabs.forEach(function (t, i) {
+          var onClick = function () { ctlStage.show(i, true) }
+          t.addEventListener('click', onClick)
+          teardown.push(function () { t.removeEventListener('click', onClick) })
+        })
+
+        var onBarKey = function (e) {
+          var i = tabs.indexOf(document.activeElement)
+          if (i === -1) return
+          var next = e.key === 'ArrowLeft' ? i - 1
+                   : e.key === 'ArrowRight' ? i + 1
+                   : e.key === 'Home' ? 0
+                   : e.key === 'End' ? tabs.length - 1
+                   : -1
+          if (next === -1) return
+          e.preventDefault()
+          next = (next + tabs.length) % tabs.length
+          ctlStage.show(next, true)
+          tabs[next].focus()
+        }
+        bar.addEventListener('keydown', onBarKey)
+
+        teardown.push(function () {
+          bar.removeEventListener('keydown', onBarKey)
+          bar.remove()
+          panes.forEach(function (p) { p.removeAttribute('hidden') })
+          made.forEach(function (p) { p.removeAttribute('id') })
+        })
+
+        var start = 0
+        if (owner) {
+          var m = /^#stage-(\d+)$/.exec(location.hash)
+          if (m && Number(m[1]) >= 1 && Number(m[1]) <= panes.length) start = Number(m[1]) - 1
+        }
+        ctlStage.show(start, false)
+        stages.push(ctlStage)
+      })
+    }
+
+    function claim(k, binding, what) {
+      k = normKey(k)
+      if (!k) return
+      if (RESERVED.indexOf(k) !== -1) {
+        console.warn('[diagram] key "' + k + '" is reserved by the deck or the browser; ' +
+                     what + ' was not bound')
+        return
+      }
+      var held = keys[k]
+      if (held) {
+        var staged = binding.stage && held.every(function (b) { return b.stage && b.stage !== binding.stage })
+        if (!staged) {
+          console.warn('[diagram] key "' + k + '" claimed by both ' + held[0].what + ' and ' +
+                       what + '; the first in document order wins')
+          return
+        }
+        held.push(binding)
+      } else {
+        keys[k] = [binding]
+      }
+      binding.key = k
+      binding.what = what
+    }
+
+    stages.forEach(function (st) {
+      if (st.el.getAttribute('data-stage-keys') === 'off') return
+      st.panes.forEach(function (pane, i) {
+        if (i >= 9) return
+        claim(String(i + 1), { kind: 'stage', stage: null, stages: st, index: i },
+              'stage ' + (i + 1))
+      })
+    })
+
+    Object.keys(groups).forEach(function (key) {
+      var g = groups[key]
+      g.svgs.forEach(function (svg) {
+        var auto = svg.getAttribute('data-keys') === 'auto'
+        svg.querySelectorAll('[data-input]').forEach(function (el) {
+          var name = el.getAttribute('data-input')
+          var want = el.getAttribute('data-key') || (auto ? name.charAt(0) : '')
+          if (!want) return
+          var b = {
+            kind: 'input', group: g, name: name, el: el,
+            stage: el.closest ? el.closest('[data-stage]') : null,
+          }
+          claim(want, b, 'input "' + name + '"')
+          if (b.key && !el.hasAttribute('aria-keyshortcuts')) {
+            el.setAttribute('aria-keyshortcuts', b.key.toUpperCase())
+            teardown.push(function () { el.removeAttribute('aria-keyshortcuts') })
+          }
+        })
+      })
+    })
+
+    function pick(list) {
+      for (var i = 0; i < list.length; i++) {
+        if (!list[i].stage || !list[i].stage.hasAttribute('hidden')) return list[i]
+      }
+      return null
+    }
+
+    function blocked(e) {
+      if (e.ctrlKey || e.metaKey || e.altKey) return true
+      var ae = document.activeElement
+      return !!(ae && ae.matches && ae.matches('input, textarea, select, [contenteditable]'))
+    }
+
+    function lookup(e) {
+      if (blocked(e)) return null
+      if (opts.keys === 'focus' && !root.contains(document.activeElement)) return null
+      var list = keys[normKey(e.key)]
+      return list ? pick(list) : null
+    }
+
+    var onKeyDown = function (e) {
+      if (e.repeat) return
+      var b = lookup(e)
+      if (!b) return
+      e.preventDefault()
+      e.stopPropagation()
+      if (b.kind === 'stage') { b.stages.show(b.index, true); return }
+      b.group.toggle(b.name)
+      if (b.el.focus) b.el.focus({ preventScroll: true })
+    }
+
+    var onKeyUp = function (e) {
+      if (lookup(e)) e.stopPropagation()
+    }
+
+    var keyTarget = opts.keys === 'focus' ? root : document
+    if (opts.keys !== false && Object.keys(keys).length) {
+      keyTarget.addEventListener('keydown', onKeyDown)
+      keyTarget.addEventListener('keyup', onKeyUp)
+      teardown.push(function () {
+        keyTarget.removeEventListener('keydown', onKeyDown)
+        keyTarget.removeEventListener('keyup', onKeyUp)
+      })
+    }
+
+    var onFocusedKey = function (e) {
+      if (e.key.length !== 1 || e.ctrlKey || e.metaKey || e.altKey) return
+      var ae = document.activeElement
+      var toggle = ae && ae.closest ? ae.closest('[data-input]') : null
+      if (toggle && root.contains(toggle)) e.stopPropagation()
+    }
+    root.addEventListener('keydown', onFocusedKey)
+    root.addEventListener('keyup', onFocusedKey)
+    teardown.push(function () {
+      root.removeEventListener('keydown', onFocusedKey)
+      root.removeEventListener('keyup', onFocusedKey)
+    })
+
+    if (typeof opts.lock === 'function') {
+      var unlock = null
+      var release = function () { if (unlock) { unlock(); unlock = null } }
+      var onIn = function () { if (!unlock) unlock = opts.lock() }
+      var onOut = function (e) {
+        if (e.relatedTarget && root.contains(e.relatedTarget)) return
+        release()
+      }
+      root.addEventListener('focusin', onIn)
+      root.addEventListener('focusout', onOut)
+      teardown.push(function () {
+        root.removeEventListener('focusin', onIn)
+        root.removeEventListener('focusout', onOut)
+        release()
+      })
+    }
+
+    Object.keys(groups).forEach(function (k) { groups[k].repaint() })
+
+    var ctl = {
+      groups: groups,
+      stages: stages,
+      keys: keys,
+      repaintAll: function () { Object.keys(groups).forEach(function (k) { groups[k].repaint() }) },
+      destroy: function () {
+        teardown.splice(0).reverse().forEach(function (off) { off() })
+        stages.length = 0
+        Object.keys(keys).forEach(function (k) { delete keys[k] })
+      },
+    }
+    return ctl
+  }
+
+  function init(onpaint) {
+    return mount(document, { onpaint: onpaint }).groups
+  }
+
+  var api = { define: define, mount: mount, init: init, solvers: SOLVERS }
+
+  if (typeof document !== 'undefined') {
+    var auto = function () {
+      if (mountCount) return
+      if (document.documentElement.hasAttribute('data-diagram-manual')) return
+      if (!document.querySelector('svg[data-logic]')) return
+      api.auto = mount(document, {})
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto)
+    else setTimeout(auto, 0)
+  }
+
+  return api
+})()
+
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSCI 366</title>
+<style>
+body { background: #f4f4f2; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.55; max-width: 40rem; margin: 0 auto; padding: 2rem 1rem 4rem; }
+a { color: #002f87; }
+header { display: flex; align-items: center; justify-content: center; text-align: center; gap: 1rem; padding-bottom: 1rem; border-bottom: 3px solid #d4a017; }
+header img { width: 72px; height: auto; }
+header h1 { margin: 0; color: #002f87; }
+header p { margin: 0; color: #5a5a5a; }
+h1 { color: #002f87; }
+h2 { font-size: 1.1rem; margin-bottom: .25rem; }
+ul { margin-top: .25rem; }
+</style>
+</head>
+<body>
+
+<header>
+<img src="img/bobcat.png" alt="Montana State University bobcat logo">
+<div>
+<h1>CSCI 366</h1>
+<p>Computer Systems, Montana State University</p>
+</div>
+</header>
+
+<p>This page holds resources for the CSCI 366: Systems class.</p>
+
+<nav aria-label="Page index">
+<ul>
+<li><a href="#emulators">Emulators</a></li>
+<li><a href="#plugin">IntelliJ Plugin</a></li>
+<li><a href="#demos">Demos</a>
+<ul>
+<li><a href="#demo-03">03 Introduction To Binary Computing</a></li>
+<li><a href="#demo-04">04 Bytes, Hex And Integers</a></li>
+<li><a href="#demo-05">05 Floating Point</a></li>
+<li><a href="#demo-06">06 Bitwise Operations</a></li>
+<li><a href="#demo-08">08 The CPU</a></li>
+<li><a href="#demo-09">09 The ALU</a></li>
+<li><a href="#demo-11">11 Memory</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+
+<h1 id="emulators">Emulators</h1>
+<ul>
+<li><a href="https://scott-cpu.cs.montana.edu/">SDS-1</a></li>
+<li><a href="https://mtmc.cs.montana.edu/">MTMC-16</a></li>
+</ul>
+
+<h1 id="plugin">IntelliJ Plugin</h1>
+<p>The x366 plugin adds syntax highlighting, debugging, and C-- support. It needs IntelliJ 2026.2 or newer.</p>
+<details>
+<summary>Installation instructions</summary>
+<ol>
+<li>Open <em>Settings</em> and select <em>Plugins</em></li>
+<li>Click the gear icon and select <em>Manage Plugin Repositories...</em></li>
+<li>Click <em>+</em>, then add <code>https://msu.github.io/csci366-www/plugin/updatePlugins.xml</code></li>
+<li>Click <em>OK</em></li>
+<li>In the <em>Marketplace</em> tab, search for <em>x366</em> and click <em>Install</em></li>
+<li>Restart IntelliJ if it asks</li>
+</ol>
+<p>To install by hand, download the <a href="plugin/x366-intellij-plugin-1.0.9.zip">plugin zip</a>, then select <em>Install Plugin from Disk...</em> from the gear icon.</p>
+</details>
+
+<h1 id="demos">Demos</h1>
+
+<h2 id="demo-03">03 Introduction To Binary Computing</h2>
+<ul>
+<li><a href="03_binary_computing/sram-cell.html">SRAM Cell</a></li>
+<li><a href="03_binary_computing/half-adder.html">Half Adder</a></li>
+<li><a href="03_binary_computing/full-adder.html">Full Adder</a></li>
+<li><a href="03_binary_computing/full-adder-block.html">Full Adder Block</a></li>
+<li><a href="03_binary_computing/ripple-carry-4.html">Ripple Carry 4</a></li>
+</ul>
+
+<h2 id="demo-04">04 Bytes, Hex And Integers</h2>
+<ul>
+<li><a href="04_bytes_and_integers/byte-unsigned.html">Byte Unsigned</a></li>
+<li><a href="04_bytes_and_integers/byte-anatomy.html">Byte Anatomy</a></li>
+<li><a href="04_bytes_and_integers/ascii-byte.html">ASCII Byte</a></li>
+<li><a href="04_bytes_and_integers/rgb-color.html">RGB Color</a></li>
+<li><a href="04_bytes_and_integers/binary-to-hex.html">Binary To Hex</a></li>
+</ul>
+
+<h2 id="demo-05">05 Floating Point</h2>
+<ul>
+<li><a href="05_floating_point/float16.html">Float16</a></li>
+<li><a href="05_floating_point/float16-point.html">Floating the Float16 Point</a></li>
+</ul>
+
+<h2 id="demo-06">06 Bitwise Operations</h2>
+<ul>
+<li><a href="06_bitwise_operations/bitwise-and.html">Bitwise AND</a></li>
+<li><a href="06_bitwise_operations/bitwise-or.html">Bitwise OR</a></li>
+<li><a href="06_bitwise_operations/bitwise-xor.html">Bitwise XOR</a></li>
+<li><a href="06_bitwise_operations/bit-shift.html">Bit Shift</a></li>
+<li><a href="06_bitwise_operations/mask-test.html">Mask Test</a></li>
+<li><a href="06_bitwise_operations/mask-set.html">Mask Set</a></li>
+<li><a href="06_bitwise_operations/mask-clear.html">Mask Clear</a></li>
+</ul>
+
+<h2 id="demo-08">08 The CPU</h2>
+<ul>
+<li><a href="08_scott_cpu_intro/fetch-execute-cycle.html">Fetch Execute Cycle</a></li>
+<li><a href="08_scott_cpu_intro/register-blocks-diagram.html">Register Blocks Diagram</a></li>
+<li><a href="08_scott_cpu_intro/memory-block-diagram.html">Memory Block Diagram</a></li>
+</ul>
+
+<h2 id="demo-09">09 The ALU</h2>
+<ul>
+<li><a href="09_scott_alu/scott-alu.html">Scott ALU</a></li>
+<li><a href="09_scott_alu/alu-not.html">ALU NOT</a></li>
+<li><a href="09_scott_alu/alu-and.html">ALU AND</a></li>
+<li><a href="09_scott_alu/alu-or.html">ALU OR</a></li>
+<li><a href="09_scott_alu/alu-xor.html">ALU XOR</a></li>
+<li><a href="09_scott_alu/alu-shl.html">ALU SHL</a></li>
+<li><a href="09_scott_alu/alu-shr.html">ALU SHR</a></li>
+<li><a href="09_scott_alu/alu-add.html">ALU ADD</a></li>
+<li><a href="09_scott_alu/enabler-8.html">Enabler 8</a></li>
+<li><a href="09_scott_alu/two-to-four-decoder-circuit.html">Two To Four Decoder Circuit</a></li>
+<li><a href="09_scott_alu/alu-op-select.html">ALU Op Select</a></li>
+<li><a href="09_scott_alu/clock-stepper.html">Clock Stepper</a></li>
+</ul>
+
+<h2 id="demo-11">11 Memory</h2>
+<ul>
+<li><a href="11_scott_memory/memory-decoder-grid.html">Memory Decoder Grid</a></li>
+<li><a href="11_scott_memory/memory-cell-intersection.html">Memory Cell Intersection</a></li>
+</ul>
+
+</body>
+</html>

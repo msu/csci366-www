@@ -1,0 +1,5 @@
+<plugins>
+  <plugin id="csci366.x366-debugger" url="https://msu.github.io/csci366-www/plugin/x366-intellij-plugin-1.0.9.zip" version="1.0.9">
+    <idea-version since-build="262"/>
+  </plugin>
+</plugins>
