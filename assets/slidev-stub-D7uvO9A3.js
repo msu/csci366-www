@@ -1,0 +1,1 @@
+import{r as a}from"./runtime-core.esm-bundler-CCdwqH5A.js";function u(){const e=a(0);let r=0;return{$clicksContext:{register:(n,t)=>{r=t.max},unregister:()=>{}},$clicks:e,$page:a(0),$nav:a({next:()=>{e.value=Math.min(e.value+1,r)},prev:()=>{e.value=Math.max(e.value-1,0)},go:(n,t)=>{e.value=t}})}}function i(){return{isPrintMode:a(!1)}}export{u as a,i as u};
